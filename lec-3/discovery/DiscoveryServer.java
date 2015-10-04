@@ -1,0 +1,214 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class DiscoveryServer {
+
+	// map that contains service names as key, ip:port list as value
+	private static Map<String, List<String>> serviceMap = new HashMap<String, List<String>>();
+	
+	// map that contains ip:port as key, service as value
+	// can be used for checking redundancy and removing service
+	private static Map<String, String> reverseMap = new HashMap<String, String>();
+	
+	public static void main(String[] args) throws Exception {
+		// check if argument length is invalid
+		if (args.length != 1) {
+			System.err.println("Usage: java DiscoveryServer port");
+		}
+		// create socket
+		int port = Integer.parseInt(args[0]);
+		ServerSocket serverSocket = new ServerSocket(port);
+		System.err.println("Started server on port " + port);
+
+		// wait for connections, and process
+		try {
+			while (true) {
+				// a "blocking" call which waits until a connection is requested
+				Socket clientSocket = serverSocket.accept();
+				System.err.println("\nAccepted connection from client");
+				process(clientSocket);
+			}
+
+		} catch (IOException e) {
+			System.err.println("Connection Error");
+		}
+		System.exit(0);
+	}
+
+	public static void process(Socket clientSocket) throws IOException {
+		// open up IO streams
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				clientSocket.getInputStream()));
+		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+		/* Write a welcome message to the client */
+		out.println("Welcome to the simple server!");
+
+		/* read and print the client's request */
+		// readLine() blocks until the server receives a new line from client
+		String userInput;
+		if ((userInput = in.readLine()) == null) {
+			System.out.println("Error reading message");
+			out.close();
+			in.close();
+			clientSocket.close();
+			return;
+		}
+
+		System.out.println("Received message: " + userInput);
+
+		String[] params = userInput.split(" ");
+		if(params.length == 0) {
+			out.println("failure invalid parameters");
+			
+			// close IO streams, then socket
+			out.close();
+			in.close();
+			clientSocket.close();
+			return;
+		}
+		
+		// add <unit1> <unit2> <ip_address> <port_no>      return success/failure [reason]
+		// remove <ip_address> <port_no>	return success/failure [reason]
+		// lookup <unit1> <unit2> 		return ip_address port_no/none
+		if(params[0].equalsIgnoreCase("add")) {
+			// code for set request
+			processSetRequest(params, out);
+			
+		} else if(params[0].equalsIgnoreCase("remove")) {
+			// code for get request
+			processRemoveRequest(params, out);
+			
+		} else if(params[0].equalsIgnoreCase("lookup")){
+			// code for lookup request
+			processGetRequest(params, out);
+			
+		} else {
+			out.println("failure, Input error, we can only handle add, remove and lookup request!");
+		}
+
+		// close IO streams, then socket
+		out.close();
+		in.close();
+		clientSocket.close();
+	}
+	
+	/**
+	 * to process add request
+	 * @param params
+	 * add <unit1> <unit2> <ip_address> <port_no>
+	 * @param out
+	 * @throws IOException
+	 */
+	public static void processSetRequest(String[] params, PrintWriter out) throws IOException {
+		
+		// validate the parameters
+		if(params.length >= 5) {
+			
+			// bidirectional conversion
+			String conversion1 = params[1] + "<->" + params[2];
+			String conversion2 = params[2] + "<->" + params[1];
+			
+			String ip_port = params[3] + " " + params[4];
+			
+			// check redundancy
+			if(reverseMap.containsKey(ip_port)) {
+				out.println("failure exist");
+				return;
+			} else {
+				// if not exists, add it to reverseMap
+				reverseMap.put(ip_port, conversion1);
+			}
+			
+			// if there is already such conversion exists in DiscoveryServer
+			if(serviceMap.containsKey(conversion1)) {
+				// add to one direction
+				List<String> serviceList = serviceMap.get(conversion1);
+				serviceList.add(ip_port);
+				
+				// add to another direction
+				//List<String> serviceList2 = serviceMap.get(conversion2);
+				//serviceList2.add(ip_port);
+				
+			} else {
+				List<String> serviceList = new ArrayList<String>();
+				serviceList.add(ip_port);
+				
+				// add this ip and port to both directions
+				serviceMap.put(conversion1, serviceList);
+				serviceMap.put(conversion2, serviceList);
+			}
+			
+			out.println("success");
+		} else {
+			out.println("failure invalid parameters");
+		}
+	}
+	
+	/**
+	 * to process remove request
+	 * @param params
+	 * remove <ip_address> <port_no>
+	 * @param out
+	 * @throws IOException
+	 */
+	public static void processRemoveRequest(String[] params, PrintWriter out) throws IOException {
+		if(params.length >= 3) {
+			String ip_port = params[1] + " " + params[2];
+			if(reverseMap.containsKey(ip_port)) {
+				String conversion = reverseMap.get(ip_port);
+				
+				// remove from reverseMap
+				reverseMap.remove(ip_port);
+				
+				// remove from serviceMap
+				serviceMap.get(conversion).remove(ip_port);
+				
+				out.println("success");
+			} else {
+				out.println("none");
+			}
+			
+		} else {
+			out.println("failure invalid parameters");
+		}
+	}
+	
+	/**
+	 * to process lookup request
+	 * @param params
+	 * lookup <unit1> <unit2>
+	 * @param out
+	 * @throws IOException
+	 */
+	public static void processGetRequest(String[] params, PrintWriter out) throws IOException {
+		if(params.length >= 3) {
+			String conversion = params[1] + "<->" + params[2];
+			if(serviceMap.containsKey(conversion)) {
+				// TODO for load balance in v2
+				// get the first element in the address list
+				if(serviceMap.get(conversion).size() > 0) {
+					String serviceAddress = serviceMap.get(conversion).get(0);
+					out.println(serviceAddress);
+				}
+				else {
+					out.println("none");
+				}
+			} else {
+				out.println("none");
+			}
+		} else {
+			out.println("failure invalid parameters");
+		}
+		
+	}
+
+}
