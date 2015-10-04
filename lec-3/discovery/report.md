@@ -9,9 +9,9 @@ A test plan explaining what commands the TA must execute in order to compile and
 
 ##Team members
 
-**protocol designers** : Sultan Alamro
+**protocol designer** : Sultan Alamro
 
-**programmer** : Ke Wang, Zhenyang Tang, Xiaohua Sun
+**programmers** : Ke Wang, Zhenyang Tang, Xiaohua Sun
 
 ##System Capability
 
@@ -24,16 +24,19 @@ The protocol of DiscoveryServer supports three services : add, remove, lookup. D
 **Add conversion server to DiscoveryServer**
 
 Conversion server sends : add <unit1> <unit2> <ip_address> <port_no>\n
+
 DiscoveryServer response : success\n **OR** failure [reason]\n
 
 **Remove conversion server from DiscoveryServer**
 
 Conversion server sends : remove <ip_address> <port_no>\n
+
 DiscoveryServer response : success\n **OR** failure [reason]\n
 
 **Lookup a conversion service from DiscoveryServer**
 
 Client sends : remove <unit1> <unit2>\n
+
 DiscoveryServer response : <ip_address> <port_no>\n **OR** none **OR** failure [reason]\n
 
 ##Test Plan
