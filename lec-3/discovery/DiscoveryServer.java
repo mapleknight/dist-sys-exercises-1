@@ -22,6 +22,7 @@ public class DiscoveryServer {
 		// check if argument length is invalid
 		if (args.length != 1) {
 			System.err.println("Usage: java DiscoveryServer port");
+			System.exit(1);
 		}
 		// create socket
 		int port = Integer.parseInt(args[0]);
@@ -49,6 +50,10 @@ public class DiscoveryServer {
 				clientSocket.getInputStream()));
 		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
+		System.out.println("client ip: " + clientSocket.getInetAddress());
+		System.out.println("client port: " + clientSocket.getPort());
+		
+		
 		/* Write a welcome message to the client */
 		out.println("Welcome to the simple server!");
 
@@ -117,6 +122,13 @@ public class DiscoveryServer {
 			String conversion1 = params[1] + "<->" + params[2];
 			String conversion2 = params[2] + "<->" + params[1];
 			
+			try {
+				Integer.parseInt(params[4]);
+			} catch (NumberFormatException e) {
+				out.println("failure, port should be a number");
+				return;
+			}
+			
 			String ip_port = params[3] + " " + params[4];
 			
 			// check redundancy
@@ -158,6 +170,13 @@ public class DiscoveryServer {
 	 */
 	public static void processRemoveRequest(String[] params, PrintWriter out) throws IOException {
 		if(params.length >= 3) {
+			try {
+				Integer.parseInt(params[2]);
+			} catch (NumberFormatException e) {
+				out.println("failure, port should be a number");
+				return;
+			}
+			
 			String ip_port = params[1] + " " + params[2];
 			if(reverseMap.containsKey(ip_port)) {
 				String conversion = reverseMap.get(ip_port);
@@ -187,6 +206,13 @@ public class DiscoveryServer {
 	 */
 	public static void processGetRequest(String[] params, PrintWriter out) throws IOException {
 		if(params.length >= 3) {
+			try {
+				Integer.parseInt(params[2]);
+			} catch (NumberFormatException e) {
+				out.println("failure, port should be a number");
+				return;
+			}
+			
 			String conversion = params[1] + "<->" + params[2];
 			if(serviceMap.containsKey(conversion)) {
 				// TODO for load balance in v2
