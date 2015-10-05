@@ -34,6 +34,7 @@ class ConversionServer:
             return result 
         except:
             print "Connection error"
+            sys.exit(1)
 
     def __str__(self):
         return self.addr+":"+self.portnum+":"+self.conv_in+":"+self.conv_out
@@ -109,6 +110,7 @@ def add_remove(req):
             sock.close()
         except:
             print "Connection error"
+            sys.exit(1)
     else:
         print "Your input must be 'ADD' or 'REMOVE' (case-insensitive)"
 
@@ -119,6 +121,7 @@ try:
     s.listen(5)
 except:
     print "Connection error"
+    sys.exit(1)
 
 print "Enter ADD/REMOVE (case-insensitive) anytime to add/remove proxy server to/from the Discovery Server"
 while True:
