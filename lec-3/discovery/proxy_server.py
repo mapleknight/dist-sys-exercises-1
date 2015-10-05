@@ -78,23 +78,38 @@ interface = ""
 # if input arguments are wrong, print out usage
 # TODO add error checking
 
-portnum = int(sys.argv[1])
+myPubIP = int(sys.argv[1])
+portnum = int(sys.argv[2])
+DisServerIP = int(sys.argv[3])
+DisServer_portNum = int(sys.argv[4])
 servers = {}
 
 #register servers in the format addr:portnum:inunit:outunit
-for i in range(2,len(sys.argv)):
-    serverinfo=sys.argv[i].split("::")
+for i in range(5,len(sys.argv)):
+    serverinfo=sys.argv[i].split(":")
     servers[serverinfo[2]+serverinfo[3]]=ConversionServer(serverinfo[0],serverinfo[1],serverinfo[2],serverinfo[3])
     servers[serverinfo[3]+serverinfo[2]]=ConversionServer(serverinfo[0],serverinfo[1],serverinfo[3],serverinfo[2])
 
-print(servers)
+#print(servers)
 
-# creat socket and send a message to Print server 
+# fucntion to add/remove entries from Discovery Server
+def add_remove(req):
+    if req.lower() == "add" or req.lower() == "remove":
+        try:
+            # create a socket and connect to the Discovery Server
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((DisServerIP, DisServer_portNum))
+            print "Sending '" + req + " in m " + myPubIP + " " + portnum + "' " + "to the Discovery Server"
+            sock.send(req + " in m " + myPubIP + " " + portnum)
+            userInput = sock.recv(BUFFER_SIZE)
+            print "Response from Discovery Server: " + userInput
+            sock.close()
+        except:
+        print "Connection error"
+    else:
+        print "Your input must be 'ADD' or 'REMOVE' (case-insensitive)"
+
 try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((Print_server_IP, PortNum))
-    sock.send(MESSAGE)
-
 # create socket to receive connection 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((interface, portnum))
@@ -102,7 +117,9 @@ try:
 except:
     print "Connection error"
 
+print "Enter ADD/REMOVE (case-insensitive) anytime to add/remove proxy server to/from the Discovery Server"
 while True:
+    add_remove(input())
     # accept connection and print out info of client
     conn, addr = s.accept()
     print 'Accepted connection from client', addr
