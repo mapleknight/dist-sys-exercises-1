@@ -1,10 +1,3 @@
-A list of students on your team and their roles (e.g., protocol designer, programmer, tester, etc)
-A brief summary of the capabilities of your system
-A protocol specification that clearly explains the protocol used by your system.
-If you have extended the protocol in some way, explain how
-Even if you have not changed the protocol at all, you should fully explain how the protocol works. Assume that the reader of the document does not know anything about the discovery protocol discussed in class.
-A test plan explaining what commands the TA must execute in order to compile and test your program.
-
 #Report for HW4 DiscoveryServer V1
 
 ##Team members
@@ -59,13 +52,11 @@ add kg lbs 10.0.0.10 5556
 ```
 
 Response :
- 
 ```
 success
 ```
 
 If we try to add another service which has same ip and port, the response will be :
-
 ```
 failure exist
 ```
@@ -73,14 +64,12 @@ failure exist
 2.2 test "lookup" request
 
 Request, look for a service that can serve the conversion between kg and lbs :
-
 ```
 telnet <server_ip> 5555
 lookup kg lbs
 ```
 
 Response : 
-
 ```
 10.0.0.10 5556
 ```
@@ -88,7 +77,6 @@ Response :
 If we want to look for a service that has not been added to DiscoveryServer, the response will be :
 
 Response : 
-
 ```
 none
 ```
@@ -102,7 +90,6 @@ remove 10.0.0.10 5556
 ```
 
 Response : 
-
 ```
 success
 ```
@@ -110,7 +97,6 @@ success
 If we want to remove this service again, the response will be :
 
 Response : 
-
 ```
 none
 ```
@@ -118,7 +104,6 @@ none
 If we want to remove a service we have never added, the response will be :
 
 Response : 
-
 ```
 none
 ```
