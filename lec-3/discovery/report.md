@@ -4,7 +4,7 @@
 
 **protocol designer** : Sultan Alamro
 
-**programmers** : Ke Wang, Zhenyang Tang, Xiaohua Sun
+**programmers** : Ke Wang, Zhenyang Tang, Xiaohua Sun, Sultan Alamro
 
 ##System Capability
 
