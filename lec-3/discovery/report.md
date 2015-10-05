@@ -43,7 +43,7 @@ java DiscoveryServer 5555
 
 ### Use "telnet" to test this server
 
-1    test "add" request
+1. test "add" request
 
 Request :
 ```
@@ -61,7 +61,7 @@ If we try to add another service which has same ip and port, the response will b
 failure exist
 ```
 
-2    test "lookup" request
+2. test "lookup" request
 
 Request, look for a service that can serve the conversion between kg and lbs :
 ```
@@ -81,9 +81,9 @@ Response :
 none
 ```
 
-3    test "remove" request
+3. test "remove" request
 
-Request, remove the service we have added in test case 2.1 :
+Request, remove the service we have added in test case 1. :
 ```
 telnet <server_ip> 5555
 remove 10.0.0.10 5556
