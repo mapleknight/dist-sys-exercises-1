@@ -20,17 +20,20 @@ class ConversionServer:
 
     def convert(self, input_amount):
         # Create a socket 
-        tmpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            tmpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # Connect to server 
-        print("Connecting to : " + self.addr + " " + self.portnum)
-        tmpsock.connect((self.addr, int(self.portnum)))
+            # Connect to server 
+            print("Connecting to : " + self.addr + " " + self.portnum)
+            tmpsock.connect((self.addr, int(self.portnum)))
 
-        tmpsock.send(self.conv_in + " " + self.conv_out + " " + input_amount + "\n")
-        result = tmpsock.recv(BUFFER_SIZE)
-        tmpsock.close()
-        # Return the conversion result 
-        return result  
+            tmpsock.send(self.conv_in + " " + self.conv_out + " " + input_amount + "\n")
+            result = tmpsock.recv(BUFFER_SIZE)
+            tmpsock.close()
+            # Return the conversion result 
+            return result 
+        except:
+            print "Connection error"
 
     def __str__(self):
         return self.addr+":"+self.portnum+":"+self.conv_in+":"+self.conv_out
@@ -105,7 +108,7 @@ def add_remove(req):
             print "Response from Discovery Server: " + userInput
             sock.close()
         except:
-        print "Connection error"
+            print "Connection error"
     else:
         print "Your input must be 'ADD' or 'REMOVE' (case-insensitive)"
 
