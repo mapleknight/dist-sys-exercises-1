@@ -34,16 +34,16 @@ DiscoveryServer response : <ip_address> <port_no>\n **OR** none **OR** failure [
 
 ##Test Plan
 
-1. Compile and run DiscoveryServer.java
+### Compile and run DiscoveryServer.java
 
 ```
 javac DiscoveryServer.java
 java DiscoveryServer 5555
 ```
 
-2. Use "telnet" to test this server
+### Use "telnet" to test this server
 
-2.1 test "add" request
+1. test "add" request
 
 Request :
 ```
@@ -61,7 +61,7 @@ If we try to add another service which has same ip and port, the response will b
 failure exist
 ```
 
-2.2 test "lookup" request
+2. test "lookup" request
 
 Request, look for a service that can serve the conversion between kg and lbs :
 ```
@@ -81,7 +81,7 @@ Response :
 none
 ```
 
-2.3 test "remove" request
+3. test "remove" request
 
 Request, remove the service we have added in test case 2.1 :
 ```
