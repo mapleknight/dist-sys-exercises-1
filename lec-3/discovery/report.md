@@ -70,7 +70,30 @@ If we try to add another service which has same ip and port, the response will b
 failure exist
 ```
 
-2.2 test "remove" request
+2.2 test "lookup" request
+
+Request, look for a service that can serve the conversion between kg and lbs :
+
+```
+telnet <server_ip> 5555
+lookup kg lbs
+```
+
+Response : 
+
+```
+10.0.0.10 5556
+```
+
+If we want to look for a service that has not been added to DiscoveryServer, the response will be :
+
+Response : 
+
+```
+none
+```
+
+2.3 test "remove" request
 
 Request, remove the service we have added in test case 2.1 :
 ```
@@ -100,25 +123,4 @@ Response :
 none
 ```
 
-2.3 test "lookup" request
 
-Request, look for a service that can serve the conversion between kg and lbs :
-
-```
-telnet <server_ip> 5555
-lookup kg lbs
-```
-
-Response : 
-
-```
-10.0.0.10 5556
-```
-
-If we want to look for a service that has not been added to DiscoveryServer, the response will be :
-
-Response : 
-
-```
-none
-```

@@ -130,13 +130,9 @@ public class DiscoveryServer {
 			
 			// if there is already such conversion exists in DiscoveryServer
 			if(serviceMap.containsKey(conversion1)) {
-				// add to one direction
+				// add to the service list, both direction conversion refer to the same service list
 				List<String> serviceList = serviceMap.get(conversion1);
 				serviceList.add(ip_port);
-				
-				// add to another direction
-				//List<String> serviceList2 = serviceMap.get(conversion2);
-				//serviceList2.add(ip_port);
 				
 			} else {
 				List<String> serviceList = new ArrayList<String>();
